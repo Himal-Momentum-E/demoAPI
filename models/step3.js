@@ -12,7 +12,7 @@ const step3Schema = new mongoose.Schema(
     createdDateTime: String,
     closedDateTime: String,
   },
-  { collection: "Step2" }
+  { collection: "Step3" }
 );
 
 module.exports = mongoose.model("Step3", step3Schema);
