@@ -58,7 +58,7 @@ router.get("/", async (req, res) => {
 
 router.get("/allVehiclesStep2", async (req, res) => {
   try {
-    const vehicles = await Step2.distinct("vehicleID"); // Get unique vehicle IDs
+    const vehicles = await Step2.find();
 
     if (!vehicles.length) {
       return res.status(404).json({ error: "No vehicles found in Step2" });
