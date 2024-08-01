@@ -8,10 +8,10 @@ const Step3 = require("../models/step3");
 
 router.get("/", async (req, res) => {
   const vehicleId = req.query.vehicleId; // Use req.query for query parameters
-  const stepId = req.query.step;
+  const stepID = req.query.step;
 
   try {
-    if (!vehicleId || !stepId) {
+    if (!vehicleId || !stepID) {
       return res
         .status(400)
         .json({ error: "Missing vehicleId or step query parameters" });
@@ -40,7 +40,7 @@ router.get("/", async (req, res) => {
         return res.status(400).json({ error: "Invalid step ID" });
     }
 
-    data = await Model.find({ vehicleID }); // Use the dynamically selected model
+    data = await Model.find({ vehicleId }); // Use the dynamically selected model
 
     if (!data.length) {
       return res
