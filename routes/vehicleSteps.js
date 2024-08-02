@@ -72,11 +72,39 @@ router.get("/allVehiclesStep2", async (req, res) => {
 
 router.get("/allVehiclesStep3", async (req, res) => {
   try {
-    const vehicles = await Step3.find().limit(40);
+    const allVehicleIds = await Step3.distinct("vehicleId"); // Get unique vehicle IDs
 
-    if (!vehicles.length) {
-      return res.status(404).json({ error: "No vehicles found in Step3" });
+    const numVehiclesToSelect = Math.min(4, allVehicleIds.length); // Ensure we don't select more than 8 vehicles
+
+    function getRandomUniqueItems(arr, numItems) {
+      if (numItems > arr.length) {
+        throw new Error(
+          "Cannot get more unique items than the length of the array"
+        );
+      }
+      const shuffled = arr.sort(() => 0.5 - Math.random());
+      return shuffled.slice(0, numItems);
     }
+
+    const selectedVehicleIds = getRandomUniqueItems(
+      allVehicleIds,
+      numVehiclesToSelect
+    );
+
+    const vehicles = await Step3.aggregate([
+      { $match: { vehicleId: { $in: selectedVehicleIds } } },
+      { $group: { _id: "$vehicleId", data: { $push: "$$ROOT" } } },
+      {
+        $project: { _id: 0, vehicleId: "$_id", data: { $slice: ["$data", 5] } },
+      },
+    ]);
+
+    const flattenedVehicles = vehicles.flatMap((v) => v.data); // Flatten the array
+    const limitedVehicles = flattenedVehicles.slice(0, 40); // Limit to 40 items
+
+    // if (!vehicles.length) {
+    //   return res.status(404).json({ error: "No vehicles found in Step3" });
+    // }
 
     const today = new Date();
     const oneWeekFromToday = new Date(
@@ -91,10 +119,12 @@ router.get("/allVehiclesStep3", async (req, res) => {
     }
 
     // Add a random futureDate field to each vehicle object
-    const vehiclesWithFutureDate = vehicles.map((vehicle) => ({
-      ...vehicle.toObject(),
+    const vehiclesWithFutureDate = limitedVehicles.map((vehicle) => ({
+      ...vehicle,
       dueDate: getRandomDate(today, oneWeekFromToday),
     }));
+
+    vehiclesWithFutureDate.sort((a, b) => b.futureDate - a.futureDate);
 
     res.json(vehiclesWithFutureDate);
   } catch (err) {
