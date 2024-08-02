@@ -2,12 +2,15 @@
 const express = require("express");
 const connectDB = require("./config/db");
 const vehicleStepRoutes = require("./routes/vehicleSteps"); // Correct import
-
+const cors = require("cors");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Connect to the database
 connectDB();
+
+// Enable CORS for all routes (Option 1: Allow all origins)
+app.use(cors()); 
 
 // Middleware
 app.use(express.json()); // Parse JSON bodies
