@@ -4,7 +4,7 @@ const Step1 = require("../models/step1");
 const Step2 = require("../models/step2");
 const Step3 = require("../models/step3");
 // const Step4 = require("../models/step4");
-// const Step7 = require("../models/step7");
+const Step7 = require("../models/step7");
 
 router.get("/", async (req, res) => {
   const vehicleId = req.query.vehicleId; // Use req.query for query parameters
@@ -33,9 +33,9 @@ router.get("/", async (req, res) => {
       // case "4":
       //   Model = Step4;
       //   break;
-      // case "7":
-      //   Model = Step7;
-      //   break;
+      case "7":
+        Model = Step7;
+        break;
       default:
         return res.status(400).json({ error: "Invalid step ID" });
     }
@@ -69,6 +69,8 @@ router.get("/allVehiclesStep2", async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 });
+
+
 
 router.get("/allVehiclesStep3", async (req, res) => {
   try {
@@ -134,3 +136,18 @@ router.get("/allVehiclesStep3", async (req, res) => {
 });
 
 module.exports = router;
+
+router.get("/allVehiclesStep7", async (req, res) => {
+  try {
+    const vehicles = await Step7.find();
+
+    if (!vehicles.length) {
+      return res.status(404).json({ error: "No vehicles found in Step2" });
+    }
+
+    res.json(vehicles);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
