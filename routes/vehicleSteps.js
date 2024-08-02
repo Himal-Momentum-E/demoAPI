@@ -71,5 +71,20 @@ router.get("/allVehiclesStep2", async (req, res) => {
   }
 });
 
+router.get("/allVehiclesStep3", async (req, res) => {
+  try {
+    const vehicles = await Step3.find();
+
+    if (!vehicles.length) {
+      return res.status(404).json({ error: "No vehicles found in Step2" });
+    }
+
+    res.json(vehicles);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 
 module.exports = router;
