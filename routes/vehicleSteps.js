@@ -6,6 +6,7 @@ const Step3 = require("../models/step3");
 // const Step4 = require("../models/step4");
 const Step7 = require("../models/step7");
 const VehicleDetails = require("../models/vehicleDetails");
+const vehicleDetails = require("../models/vehicleDetails");
 
 router.get("/", async (req, res) => {
   const vehicleId = req.query.vehicleId; // Use req.query for query parameters
@@ -36,6 +37,9 @@ router.get("/", async (req, res) => {
       //   break;
       case "7":
         Model = Step7;
+        break;
+      case "details":
+        Model = vehicleDetails;
         break;
       default:
         return res.status(400).json({ error: "Invalid step ID" });
